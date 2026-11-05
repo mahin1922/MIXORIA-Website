@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MIXORIA – Premium Fashion. Modern Lifestyle.</title>
+<meta name="description" content="MIXORIA virtual fashion store: hoodies, jackets, T-shirts and shirts.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#e9e9e6;--ink:#161616;--mute:#6d6d68;--gold:#b08d4a;--line:rgba(0,0,0,.14);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#e9e9e6}}
+html{height:100%}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.5 Jost,system-ui,sans-serif}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+#track{height:520vh}
+header{position:fixed;top:0;left:0;right:0;z-index:5;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 0;text-align:center;pointer-events:none}
+.logo{font:600 22px/1 Jost,sans-serif;letter-spacing:.5em;margin-right:-.5em;color:var(--ink);text-decoration:none;pointer-events:auto}
+.sub{font-size:9px;letter-spacing:.3em;color:var(--mute);margin-top:3px}
+.top{display:flex;gap:22px;justify-content:center;margin-top:8px;pointer-events:auto}
+.top a{color:var(--mute);text-decoration:none;font-size:12px;padding:4px 0}
+.top a:hover,.top a:focus-visible{color:var(--ink);outline:none;box-shadow:0 1px 0 var(--gold)}
+#pill{position:fixed;z-index:6;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:2px;padding:5px;background:rgba(255,255,255,.88);border-radius:30px;box-shadow:0 4px 22px rgba(0,0,0,.12);max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none}
+#pill button{border:0;background:none;font:500 12px Jost,sans-serif;padding:8px 14px;border-radius:20px;cursor:pointer;color:var(--ink);white-space:nowrap}
+#pill button[aria-current=true]{background:var(--ink);color:#fff}
+#pill button:focus-visible{outline:2px solid var(--gold)}
+#tip{position:fixed;z-index:4;transform:translate(-50%,0);text-align:center;pointer-events:none;opacity:0;transition:opacity .2s;font-size:12px;white-space:nowrap}
+#tip b{display:block;font-weight:500}#tip span{color:var(--gold)}
+#card{position:fixed;z-index:7;right:20px;top:50%;transform:translate(120%,-50%);width:300px;background:#fff;padding:22px;box-shadow:0 10px 40px rgba(0,0,0,.16);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+#card.on{transform:translate(0,-50%)}
+#card h2{font:600 20px/1.2 Jost;margin:0 0 4px}#card .pr{color:var(--gold);font-size:16px;margin:0 0 4px}
+#card p.d{font-size:13px;color:var(--mute);margin:0 0 14px}
+#card .l{font-size:11px;color:var(--mute);margin:12px 0 6px}
+.sw,.sz{display:flex;gap:8px;flex-wrap:wrap}
+.sw button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);cursor:pointer;padding:0}
+.sw button[aria-pressed=true]{box-shadow:0 0 0 2px #fff,0 0 0 3px var(--ink)}
+.sz button{min-width:42px;padding:7px 0;border:1px solid var(--line);background:#fff;cursor:pointer;font:inherit}
+.sz button[aria-pressed=true]{background:var(--ink);color:#fff}
+#card .add{margin-top:18px;width:100%;padding:12px;border:0;background:#cfcfca;color:#666;font:500 13px Jost;cursor:not-allowed}
+#card .x{position:absolute;right:10px;top:8px;border:0;background:none;font-size:22px;cursor:pointer;line-height:1}
+
+#admbtn{display:none;position:fixed;z-index:6;left:16px;bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--gold);color:#fff;border:0;padding:10px 16px;border-radius:30px;font:500 12px Jost;cursor:pointer}
+#adm{position:fixed;z-index:10;top:0;bottom:0;left:0;width:min(420px,100vw);background:#fff;box-shadow:8px 0 40px rgba(0,0,0,.18);transform:translateX(-105%);transition:transform .35s;overflow-y:auto;padding:20px 20px 40px}
+#adm.on{transform:none}
+#adm h3{font:600 18px Jost;margin:0 0 4px}#adm .hint{font-size:12px;color:var(--mute);margin:0 0 14px}
+#adm .row{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
+#adm .row:hover{background:#f6f5f2}
+#adm .th{width:38px;height:38px;border-radius:4px;background:#ddd center/cover;border:1px solid var(--line);flex:none}
+#adm .row b{font-weight:500;display:block;font-size:13px}#adm .row small{color:var(--mute)}
+#adm label{display:block;font-size:12px;color:var(--mute);margin:12px 0 4px}
+#adm input[type=text],#adm input[type=number],#adm select,#adm textarea{width:100%;padding:9px;border:1px solid var(--line);font:inherit;background:#fff}
+#adm textarea{min-height:64px;resize:vertical}
+#adm .bt{padding:10px 14px;border:1px solid var(--ink);background:var(--ink);color:#fff;font:500 13px Jost;cursor:pointer;margin:14px 8px 0 0}
+#adm .bt.o{background:#fff;color:var(--ink)}#adm .bt.d{border-color:#b3261e;color:#b3261e;background:#fff}
+#adm .bt:disabled{opacity:.5;cursor:wait}
+#adm .pv{width:96px;height:120px;background:#eee center/contain no-repeat;border:1px solid var(--line);margin-top:6px}
+#adm .msg{font-size:12px;color:#b3261e;margin-top:10px;min-height:16px}
+#adm .cl{float:right;border:0;background:none;font-size:24px;cursor:pointer}
+.tagnew{color:var(--gold)}
+#wa{position:fixed;z-index:6;right:16px;bottom:calc(24px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;text-decoration:none;padding:10px 16px;border-radius:30px;font-size:12px}
+#wa:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+#load{position:fixed;inset:0;z-index:9;background:var(--bg);display:grid;place-items:center;font:600 20px Jost;letter-spacing:.5em;transition:opacity .6s}
+.nogl #scene,.nogl #pill,.nogl #track{display:none}
+#fb{display:none;padding:120px 20px 60px;max-width:760px;margin:auto}
+.nogl #fb{display:grid;gap:22px}
+@media (max-width:760px){.top{display:none}#wa{display:none}#card{right:0;left:0;top:auto;bottom:0;width:auto;transform:translateY(110%)}#card.on{transform:none}}
+@media (prefers-reduced-motion:reduce){#load,#tip,#card{transition:none}}
+
+#cartOpen{position:fixed;z-index:8;right:16px;top:calc(18px + env(safe-area-inset-top,0px));border:0;border-radius:24px;background:var(--ink);color:#fff;padding:10px 16px;font:500 12px Jost;cursor:pointer}
+#cartCount{display:inline-grid;place-items:center;min-width:18px;height:18px;margin-left:5px;border-radius:50%;background:var(--gold);color:#fff;font-size:10px}
+#cartPanel{position:fixed;z-index:20;right:0;top:0;bottom:0;width:min(420px,100vw);background:#fff;box-shadow:-8px 0 40px rgba(0,0,0,.18);padding:28px 22px;overflow:auto;transform:translateX(110%);transition:transform .3s}
+#cartPanel.on{transform:translateX(0)}
+#cartPanel h2,#checkoutModal h2{font:600 22px Jost;margin:0 0 18px}
+.cartClose{position:absolute;right:14px;top:10px;border:0;background:none;font-size:26px;cursor:pointer}
+.cartLine{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.cartLine small{display:block;color:var(--mute)}
+.cartLine button{border:1px solid var(--line);background:#fff;padding:4px 8px;cursor:pointer}
+.cartQty{display:flex;align-items:center;gap:8px;margin-top:7px}
+.cartTotal{display:flex;justify-content:space-between;padding:18px 0;font-size:15px}
+.cartPrimary{width:100%;border:0;background:var(--ink);color:#fff;padding:13px 16px;font:500 14px Jost;cursor:pointer;margin-top:10px}
+.cartPrimary:disabled{opacity:.5;cursor:wait}
+#checkoutModal{display:none;position:fixed;z-index:30;inset:0;background:rgba(0,0,0,.48);padding:16px;overflow:auto;align-items:center;justify-content:center}
+#checkoutModal.on{display:flex}
+.checkoutBox{position:relative;width:min(480px,100%);background:#fff;padding:28px 22px;box-shadow:0 12px 50px rgba(0,0,0,.2)}
+.checkoutHint{font-size:12px;color:var(--mute)}
+#checkoutForm label{display:block;font-size:12px;color:var(--mute);margin:12px 0 4px}
+#checkoutForm input,#checkoutForm textarea,#checkoutForm select{width:100%;padding:10px;border:1px solid var(--line);font:inherit;background:#fff}
+#checkoutForm textarea{min-height:64px}
+#checkoutMessage{font-size:12px;color:var(--mute);margin-top:12px;min-height:18px}
+@media(max-width:760px){#cartOpen{top:auto;bottom:calc(76px + env(safe-area-inset-bottom,0px));right:12px}#cartPanel{width:100vw}}
+
+
+#accountOpen{position:fixed;z-index:8;left:14px;top:calc(16px + env(safe-area-inset-top,0px));border:1px solid var(--line);border-radius:24px;background:#fff;color:var(--ink);padding:9px 14px;font:500 12px Jost;cursor:pointer;max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#accountModal{display:none;position:fixed;z-index:40;inset:0;background:rgba(0,0,0,.5);padding:16px;overflow:auto;align-items:center;justify-content:center}
+#accountModal.on{display:flex}
+.accountBox{position:relative;width:min(460px,100%);max-height:min(88vh,760px);overflow:auto;background:#fff;padding:28px 22px;box-shadow:0 12px 50px rgba(0,0,0,.2)}
+.accountBox h2{font:600 22px Jost;margin:0 0 6px}.accountHint{font-size:12px;color:var(--mute);margin:0 0 16px}
+.accountBox label{display:block;font-size:12px;color:var(--mute);margin:12px 0 4px}
+.accountBox input{width:100%;padding:10px;border:1px solid var(--line);font:inherit;background:#fff}
+.accountActions{display:flex;gap:8px;margin-top:14px}.accountActions button{flex:1;padding:11px;border:1px solid var(--ink);background:var(--ink);color:#fff;font:500 13px Jost;cursor:pointer}.accountActions button.secondary{background:#fff;color:var(--ink)}
+#accountMessage{font-size:12px;color:var(--mute);min-height:18px;margin-top:12px;overflow-wrap:anywhere}
+#accountProfile{display:none;border-top:1px solid var(--line);margin-top:18px;padding-top:14px}
+#myOrdersList{font-size:12px;color:var(--mute);margin-top:10px}.myOrder{padding:9px 0;border-bottom:1px solid var(--line)}
+@media(max-width:760px){#accountOpen{top:calc(14px + env(safe-area-inset-top,0px));left:10px;padding:8px 10px}#cartOpen{right:10px}}
+
+</style>
+</head>
+<body>
+<header>
+ <a class="logo" href="#" data-go="0" aria-label="MIXORIA home">MIXORIA</a>
+ <div class="sub">VIRTUAL STORE</div>
+ <nav class="top" aria-label="Main"><a href="#" data-go="0">Home</a><a href="#" data-go="1">Clothing</a><a href="#" data-go="2">New Arrivals</a><a href="#" data-go="3">Collections</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
+</header>
+<canvas id="scene" aria-label="3D MIXORIA showroom"></canvas>
+<div id="track"></div>
+<div id="tip"><b id="tn"></b><span id="tp"></span></div>
+<aside id="card" aria-live="polite"><button class="x" aria-label="Close" id="cx">×</button><h2 id="cn"></h2><p class="pr" id="cp"></p><p class="d" id="cd"></p>
+ <div class="l">Colour</div><div class="sw" id="csw"></div><div class="l">Size</div><div class="sz" id="csz"></div>
+ <button class="add" id="addToCart" type="button">Add to cart</button></aside>
+<button id="admbtn">Manage store</button>
+<aside id="adm" aria-label="Store admin"><button class="cl" id="admx" aria-label="Close">×</button>
+<h3>Manage store</h3><p class="hint" id="admhint"></p>
+<div id="admlist"></div><button class="bt o" id="admnew">+ Add product</button><button class="bt o" id="admimp" style="display:none">Import sample products</button>
+<form id="admform" style="display:none;margin-top:14px;border-top:1px solid var(--line);padding-top:6px" onsubmit="return false">
+ <label for="f_name">Product name</label><input type="text" id="f_name" maxlength="60">
+ <label for="f_price">Price (৳ BDT)</label><input type="number" id="f_price" min="0" step="10">
+ <label for="f_cat">Category</label><select id="f_cat"></select>
+ <label for="f_style">Shape (used when there is no photo)</label><select id="f_style"></select>
+ <label for="f_color">Main colour (used when there is no photo)</label><input type="color" id="f_color" value="#2f6b4a">
+ <label for="f_desc">Description</label><textarea id="f_desc" maxlength="200"></textarea>
+ <label for="f_photo">Product photo (PNG with transparent background works best)</label><input type="file" id="f_photo" accept="image/png,image/jpeg,image/webp"><div class="pv" id="f_pv"></div>
+ <button type="button" class="bt o" id="f_rm" style="margin-top:6px">Remove photo</button>
+ <label><input type="checkbox" id="f_new"> Show in New Arrivals</label>
+ <button type="button" class="bt" id="f_save">Save product</button><button type="button" class="bt o" id="f_cancel">Cancel</button><button type="button" class="bt d" id="f_del">Delete</button>
+ <div class="msg" id="f_msg" role="status"></div>
+</form></aside>
+<nav id="pill" aria-label="Collections"></nav>
+<button id="accountOpen" type="button">Login / Account</button>
+<button id="cartOpen" type="button" aria-label="Open cart">Cart <span id="cartCount">0</span></button>
+<a id="wa" href="https://wa.me/8801760934880" target="_blank" rel="noopener">WhatsApp support</a>
+<div id="fb"></div>
+
+<aside id="cartPanel" aria-label="Shopping cart">
+  <button id="cartClose" class="cartClose" type="button" aria-label="Close cart">×</button>
+  <h2>Your Cart</h2>
+  <div id="cartItems"></div>
+  <div class="cartTotal">Subtotal: <strong id="cartSubtotal">৳0</strong></div>
+  <button id="checkoutOpen" class="cartPrimary" type="button">Proceed to checkout</button>
+</aside>
+
+<div id="accountModal" role="dialog" aria-modal="true" aria-label="Customer account">
+ <div class="accountBox">
+  <button id="accountClose" class="cartClose" type="button" aria-label="Close account">×</button>
+  <h2 id="accountTitle">Customer account</h2>
+  <p class="accountHint" id="accountIntro">Create an account or log in to place orders and view your order history.</p>
+  <form id="authForm">
+   <div id="registerNameWrap"><label for="registerName">Full name</label><input id="registerName" maxlength="80" autocomplete="name"></div>
+   <label for="accountEmail">Email</label><input id="accountEmail" type="email" required autocomplete="email">
+   <label for="accountPassword">Password</label><input id="accountPassword" type="password" required minlength="6" autocomplete="current-password">
+   <div class="accountActions"><button id="authSubmit" type="submit">Log in</button><button id="switchAuth" class="secondary" type="button">Create account</button></div>
+  </form>
+  <div id="accountProfile">
+   <p class="accountHint" id="signedInLabel"></p>
+   <label for="profilePhone">Phone number</label><input id="profilePhone" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="01XXXXXXXXX">
+   <label for="profileAddress">Delivery address</label><input id="profileAddress" maxlength="500" autocomplete="street-address">
+   <div class="accountActions"><button id="saveProfile" type="button">Save profile</button><button id="signOut" class="secondary" type="button">Log out</button></div>
+   <button id="loadMyOrders" class="cartPrimary" type="button">My Orders</button>
+   <div id="myOrdersList"></div>
+  </div>
+  <div id="accountMessage" role="status" aria-live="polite"></div>
+ </div>
+</div>
+
+<div id="checkoutModal" role="dialog" aria-modal="true" aria-label="Checkout">
+  <div class="checkoutBox">
+    <button id="checkoutClose" class="cartClose" type="button" aria-label="Close checkout">×</button>
+    <h2>Checkout</h2>
+    <p class="checkoutHint">Enter your delivery details. Please check your phone number and address.</p>
+    <form id="checkoutForm">
+      <label for="buyerName">Full name</label><input id="buyerName" required maxlength="80" autocomplete="name">
+      <label for="buyerPhone">Phone number</label><input id="buyerPhone" required inputmode="tel" maxlength="20" autocomplete="tel" placeholder="01XXXXXXXXX">
+      <label for="buyerAddress">Delivery address</label><textarea id="buyerAddress" required maxlength="500" autocomplete="street-address"></textarea>
+      <label for="buyerNote">Order note (optional)</label><textarea id="buyerNote" maxlength="300"></textarea>
+      <label for="paymentMethod">Payment method</label>
+      <select id="paymentMethod">
+        <option value="cod">Cash on Delivery</option>
+        <option value="bkash">bKash Merchant Checkout</option>
+      </select>
+      <p class="checkoutHint">bKash payment will open the official payment page after the secure server is configured.</p>
+      <button id="placeOrder" class="cartPrimary" type="submit">Place order</button>
+      <div id="checkoutMessage" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</div>
+
+<div id="load">MIXORIA</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const ALT=["#1b1b1d","#d9d4c7","#6b7a8f"];
+const CATS=["Hoodies","Jackets","T-Shirts","Shirts"];
+const STYLES=[[["hoodie","Pullover hoodie"],["hoodzip","Zip hoodie"],["crew","Sweatshirt"]],[["puffer","Puffer jacket"],["wind","Windbreaker"],["bomber","Bomber jacket"]],[["tee","T-shirt"]],[["shirt","Shirt"]]];
+const SAMPLE=[
+ {name:"Cloud Fleece Hoodie",price:3450,cat:0,style:"hoodie",color:"#a9c4e4",desc:"Brushed fleece, relaxed fit, drawstring hood."},
+ {name:"Core Zip Hoodie",price:3950,cat:0,style:"hoodzip",color:"#2a3d8f",desc:"Mid-weight zip hoodie with kangaroo pocket."},
+ {name:"Crew Sweatshirt",price:2850,cat:0,style:"crew",color:"#2f6b4a",desc:"Soft loopback cotton with ribbed trims."},
+ {name:"Alpine Puffer",price:7900,cat:1,style:"puffer",color:"#e8461e",desc:"Quilted winter puffer with a warm hood.",isNew:true},
+ {name:"Trail Windbreaker",price:5200,cat:1,style:"wind",color:"#1f2124",desc:"Light water-resistant shell with colour block."},
+ {name:"Heritage Bomber",price:6400,cat:1,style:"bomber",color:"#9a4f2d",desc:"Ribbed bomber jacket with a front zip."},
+ {name:"Oversized Core Tee",price:1290,cat:2,style:"tee",color:"#f4f3ef",desc:"240 gsm combed cotton, dropped shoulder."},
+ {name:"Heavy Cotton Tee",price:1490,cat:2,style:"tee",color:"#1b1b1d",desc:"Thick premium cotton, regular fit."},
+ {name:"Gold Mark Tee",price:1690,cat:2,style:"tee",color:"#cdb58a",desc:"Regular fit tee with a small gold mark.",isNew:true},
+ {name:"Oxford Formal Shirt",price:2450,cat:3,style:"shirt",color:"#b9d0e8",desc:"Crisp cotton oxford for office and events."},
+ {name:"Linen Mix Shirt",price:2350,cat:3,style:"shirt",color:"#e8e2d2",desc:"Breathable linen-cotton blend."},
+ {name:"Camp Collar Shirt",price:2150,cat:3,style:"shirt",color:"#a8623f",desc:"Relaxed camp collar, modern fashion fit.",isNew:true}
+].map((d,i)=>Object.assign({id:"sample"+i,order:i,photo:"",sample:true},d));
+const fmt=n=>"৳"+Number(n).toLocaleString("en-US");
+const $=id=>document.getElementById(id);
+const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+const NAV=["Store",...CATS,"New Arrivals"];
+NAV.forEach(n=>{const b=document.createElement("button");b.textContent=n;$("pill").appendChild(b)});
+const X0=1.4,SP=1.2,RAIL=2.75,P0=.2;
+let PRODUCTS=SAMPLE.slice(),mode="all",api=null;
+
+const BASEMAP={hoodie:"sweat",hoodzip:"sweat",crew:"sweat",puffer:"jack",wind:"jack",bomber:"jack",tee:"tee",shirt:"shirt"};
+const PR={
+ sweat:[[.28,0],[.62,-.08],[.88,-.3],[1,-1.55],[.78,-1.6],[.6,-.66],[.6,-1.62]],
+ jack:[[.28,0],[.64,-.08],[.9,-.3],[1.02,-1.75],[.8,-1.8],[.62,-.66],[.62,-1.8]],
+ tee:[[.28,0],[.62,-.08],[.9,-.3],[.98,-.62],[.68,-.7],[.62,-1.5]],
+ shirt:[[.28,0],[.62,-.08],[.88,-.3],[1,-1.7],[.78,-1.76],[.6,-.68],[.6,-1.85]]
+};
+const OX=160,OY=70,S=120;
+const imgs=new Map();
+function getImg(url,cb){let e=imgs.get(url);if(e){e.ok?cb(e.im):e.cbs.push(cb);return}
+ const im=new Image();e={im,ok:false,cbs:[cb]};imgs.set(url,e);im.onload=()=>{e.ok=true;e.cbs.forEach(f=>f(im))};im.onerror=()=>{imgs.delete(url)};im.src=url}
+function fitBox(im){const bw=250,bh=300,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r;return [OX-w/2,64,w,h]}
+function path(c,t){
+ const r=PR[BASEMAP[t]||"sweat"],pts=r.concat(r.slice().reverse().map(p=>[-p[0],p[1]]));
+ c.beginPath();pts.forEach((p,i)=>c[i?"lineTo":"moveTo"](OX+p[0]*S,OY+p[1]*S));c.closePath();
+ if(t==="hoodie"||t==="hoodzip"||t==="puffer"){c.moveTo(OX+54,OY-4);c.ellipse(OX,OY-4,54,40,0,0,Math.PI*2)}
+}
+function line(c,x1,y1,x2,y2,col,w){c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.strokeStyle=col;c.lineWidth=w;c.stroke()}
+function hanger(c){
+ c.strokeStyle="#8a8a8a";c.lineWidth=3;c.beginPath();c.arc(OX,22,7,Math.PI*.1,Math.PI*1.7,true);c.stroke();line(c,OX,28,OX,44,"#8a8a8a",3);
+ c.beginPath();c.moveTo(OX,44);c.lineTo(OX-92,OY+2);c.lineTo(OX+92,OY+2);c.closePath();c.strokeStyle="#c9a06a";c.lineWidth=7;c.stroke();
+}
+function drawMain(d,color,im){
+ const cv=document.createElement("canvas");cv.width=640;cv.height=800;const c=cv.getContext("2d");c.scale(2,2);
+ c.lineCap=c.lineJoin="round";hanger(c);
+ if(im){c.drawImage(im,...fitBox(im));const tx=new THREE.CanvasTexture(cv);tx.anisotropy=4;return tx}
+ const t=d.style;
+ if(t==="hoodie"||t==="hoodzip"||t==="puffer"){c.beginPath();c.ellipse(OX,OY-4,54,40,0,0,Math.PI*2);c.fillStyle=color;c.fill()}
+ path(c,t);c.fillStyle=color;c.fill();
+ c.save();path(c,t);c.clip();
+ let g=c.createLinearGradient(OX-130,0,OX+130,0);g.addColorStop(0,"rgba(0,0,0,.2)");g.addColorStop(.3,"rgba(255,255,255,.06)");g.addColorStop(.7,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.22)");
+ c.fillStyle=g;c.fillRect(0,0,320,400);
+ const bw=t==="tee"?.62:.6;
+ line(c,OX-bw*S,OY+.35*S,OX-bw*S,OY+2*S,"rgba(0,0,0,.16)",2);line(c,OX+bw*S,OY+.35*S,OX+bw*S,OY+2*S,"rgba(0,0,0,.16)",2);
+ line(c,OX-30,OY+90,OX-34,OY+170,"rgba(0,0,0,.07)",8);line(c,OX+36,OY+100,OX+40,OY+175,"rgba(0,0,0,.07)",8);
+ const hem=OY+(t==="tee"?1.5:t==="shirt"?1.85:BASEMAP[t]==="jack"?1.8:1.62)*S;
+ if(t==="puffer"){for(let y=OY+34;y<hem;y+=26)line(c,0,y,320,y,"rgba(0,0,0,.22)",3);line(c,OX,OY+10,OX,hem,"rgba(255,255,255,.35)",2)}
+ if(t==="wind"){c.fillStyle="#c8f03a";c.beginPath();c.moveTo(0,OY+110);c.lineTo(OX,OY+84);c.lineTo(320,OY+110);c.lineTo(320,400);c.lineTo(0,400);c.fill();line(c,OX,OY+8,OX,hem,"rgba(255,255,255,.5)",2)}
+ if(t==="bomber"){c.fillStyle="rgba(0,0,0,.28)";c.fillRect(0,hem-16,320,18);c.fillRect(OX-100,OY+1.74*S,200,8);line(c,OX,OY+10,OX,hem,"rgba(255,255,255,.55)",2)}
+ if(t==="hoodzip")line(c,OX,OY+14,OX,hem,"rgba(255,255,255,.6)",2);
+ if(t==="crew"){c.fillStyle="rgba(0,0,0,.14)";c.fillRect(0,hem-16,320,18)}
+ c.restore();
+ if(t==="hoodie"||t==="hoodzip"){
+  c.beginPath();c.ellipse(OX,OY+4,32,13,0,0,Math.PI*2);c.fillStyle="rgba(0,0,0,.32)";c.fill();
+  line(c,OX-12,OY+16,OX-14,OY+78,"rgba(255,255,255,.9)",3);line(c,OX+12,OY+16,OX+14,OY+74,"rgba(255,255,255,.9)",3);
+  c.beginPath();c.moveTo(OX-44,OY+1.18*S);c.lineTo(OX+44,OY+1.18*S);c.lineTo(OX+52,OY+1.5*S);c.lineTo(OX-52,OY+1.5*S);c.strokeStyle="rgba(0,0,0,.25)";c.lineWidth=2;c.stroke();
+ }
+ if(t==="puffer"){c.beginPath();c.ellipse(OX,OY+4,30,12,0,0,Math.PI*2);c.fillStyle="rgba(0,0,0,.3)";c.fill()}
+ if(t==="wind"||t==="bomber"){c.beginPath();c.ellipse(OX,OY+2,30,10,0,0,Math.PI*2);c.fillStyle="rgba(0,0,0,.3)";c.fill()}
+ if(t==="crew"||t==="tee"){c.beginPath();c.ellipse(OX,OY+2,28,11,0,0,Math.PI*2);c.strokeStyle="rgba(0,0,0,.3)";c.lineWidth=t==="crew"?6:4;c.stroke()}
+ if(t==="tee"){c.font="600 20px Jost,sans-serif";c.fillStyle="rgba(176,141,74,.9)";c.fillText("M",OX+26,OY+60)}
+ if(t==="shirt"){
+  [-1,1].forEach(s=>{c.beginPath();c.moveTo(OX,OY+4);c.lineTo(OX+s*36,OY-8);c.lineTo(OX+s*24,OY+34);c.closePath();c.fillStyle="rgba(255,255,255,.55)";c.fill();c.strokeStyle="rgba(0,0,0,.25)";c.lineWidth=1.5;c.stroke()});
+  line(c,OX,OY+30,OX,OY+1.85*S,"rgba(0,0,0,.25)",2);
+  for(let y=OY+52;y<OY+1.8*S;y+=34){c.beginPath();c.arc(OX,y,2.6,0,7);c.fillStyle="rgba(255,255,255,.8)";c.fill()}
+  c.strokeStyle="rgba(0,0,0,.22)";c.lineWidth=1.5;c.strokeRect(OX+20,OY+.5*S,28,32);
+ }
+ path(c,t);c.strokeStyle="rgba(0,0,0,.3)";c.lineWidth=1.5;c.stroke();
+ const tx=new THREE.CanvasTexture(cv);tx.anisotropy=4;return tx;
+}
+function drawShadow(d,im){
+ const cv=document.createElement("canvas");cv.width=320;cv.height=400;const c=cv.getContext("2d");
+ c.shadowColor="rgba(40,40,40,.55)";c.shadowBlur=22;c.shadowOffsetX=1000;c.translate(-1000,0);
+ if(im)c.drawImage(im,...fitBox(im));else{path(c,d.style);c.fillStyle="#000";c.fill()}
+ return new THREE.CanvasTexture(cv);
+}
+function fallback(){
+ document.body.classList.add("nogl");$("load").style.display="none";
+ $("fb").innerHTML=PRODUCTS.map(d=>`<div><b>${d.name}</b><br><span style="color:var(--gold)">${fmt(d.price)}</span><p style="margin:2px 0 6px;color:var(--mute)">${d.desc||""}</p></div>`).join("");
+}
+let gl=null;try{const k=document.createElement("canvas");gl=k.getContext("webgl")||k.getContext("experimental-webgl")}catch(e){}
+if(!gl||typeof THREE==="undefined")fallback();else start();
+
+function start(){
+ const R=new THREE.WebGLRenderer({canvas:$("scene"),antialias:true});
+ R.setPixelRatio(Math.min(devicePixelRatio,innerWidth<760?1.5:2));
+ const S3=new THREE.Scene();S3.background=new THREE.Color(0xe9e9e6);
+ const cam=new THREE.PerspectiveCamera(38,1,.1,120);
+ S3.add(new THREE.HemisphereLight(0xffffff,0xcfcfca,1.0));
+ const dl=new THREE.DirectionalLight(0xffffff,.35);dl.position.set(-3,6,8);S3.add(dl);
+ const lam=(c,o)=>new THREE.MeshLambertMaterial(Object.assign({color:c},o));
+ const wall=new THREE.Mesh(new THREE.PlaneGeometry(120,9),lam(0xe6e6e3));wall.position.set(40,4.5,-.12);S3.add(wall);
+ const side=new THREE.Mesh(new THREE.PlaneGeometry(20,9),lam(0xd6d6d3));side.rotation.y=-Math.PI/2;S3.add(side);
+ const floor=new THREE.Mesh(new THREE.PlaneGeometry(120,30),lam(0xd8d8d4));floor.rotation.x=-Math.PI/2;floor.position.set(40,0,8);S3.add(floor);
+ const base=new THREE.Mesh(new THREE.BoxGeometry(120,.18,.05),lam(0xcfcfcb));base.position.set(40,.09,-.1);S3.add(base);
+ const rail=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,1,10),new THREE.MeshStandardMaterial({color:0x2a2a2a,metalness:.6,roughness:.4}));rail.rotation.z=Math.PI/2;rail.position.z=.1;rail.position.y=RAIL;S3.add(rail);
+ const bc=document.createElement("canvas");bc.width=1400;bc.height=200;const b2=bc.getContext("2d");
+ b2.font="600 120px Jost,Arial,sans-serif";b2.fillStyle="#2b2b2b";b2.textBaseline="middle";let bx=20;
+ "MIXORIA".split("").forEach(ch=>{b2.fillText(ch,bx,100);bx+=b2.measureText(ch).width+46});
+ const bm=new THREE.Mesh(new THREE.PlaneGeometry(7,1),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(bc),transparent:true}));bm.position.set(4.6,4.75,-.1);S3.add(bm);
+ const gl2=new THREE.Mesh(new THREE.PlaneGeometry(7,.02),new THREE.MeshBasicMaterial({color:0xb08d4a}));gl2.position.set(4.6,4.1,-.1);S3.add(gl2);
+ const wood=lam(0xd9b27a),cub=new THREE.Group();
+ [0,1.35,2.7,4.05].forEach(y=>{const m=new THREE.Mesh(new THREE.BoxGeometry(2.4,.08,.9),wood);m.position.set(0,y+.1,0);cub.add(m)});
+ [-1.2,1.2].forEach(x=>{const m=new THREE.Mesh(new THREE.BoxGeometry(.08,4.1,.9),wood);m.position.set(x,2.1,0);cub.add(m)});
+ const bk=new THREE.Mesh(new THREE.BoxGeometry(2.4,4.1,.05),lam(0xc79c62));bk.position.set(0,2.1,-.4);cub.add(bk);
+ [[.8,1,.45,0xd6f23a,-.35,1.95,0],[.7,.45,.4,0x2f6cd1,.5,.43,.05],[.7,.6,.4,0x303030,.4,3,0],[.9,.5,.5,0xf1f1ee,-.4,3.35,0]].forEach(a=>{const m=new THREE.Mesh(new THREE.BoxGeometry(a[0],a[1],a[2]),lam(a[3]));m.position.set(a[4],a[5],a[6]);cub.add(m)});
+ cub.position.set(-2.1,0,.35);S3.add(cub);
+
+ const geo=new THREE.PlaneGeometry(320/120,400/120),yOff=.15-(400/120)/2;
+ let items=[],G=[null,null,null,null];
+ function build(list){
+  items.forEach(o=>{S3.remove(o.g);o.m.material.map.dispose();o.s.material.map.dispose()});items=[];
+  const sorted=list.slice().sort((a,b)=>(a.cat-b.cat)||((a.order||0)-(b.order||0)));
+  sorted.forEach((d,i)=>{
+   const g=new THREE.Group();g.position.set(X0+i*SP,RAIL,.1);
+   const m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:drawMain(d,d.color),transparent:true,alphaTest:.02}));m.position.set(0,yOff,.04);
+   const s=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:drawShadow(d),transparent:true,opacity:.7,depthWrite:false}));s.position.set(.16,yOff-.12,-.18);s.scale.set(1.04,1.04,1);
+   g.add(s);g.add(m);S3.add(g);
+   const o={d,g,m,s,col:d.color,hv:0,i,tx:g.position.x,ts:1,sc:1};items.push(o);
+   if(d.photo)getImg(d.photo,im=>{if(items.indexOf(o)<0)return;o.m.material.map.dispose();o.m.material.map=drawMain(d,d.color,im);o.s.material.map.dispose();o.s.material.map=drawShadow(d,im);o.m.material.needsUpdate=o.s.material.needsUpdate=true});
+  });
+  layout(true);
+ }
+ function layout(instant){
+  let j=0;const cs=[[],[],[],[]];
+  items.forEach((o,i)=>{
+   if(mode==="new"){if(o.d.isNew){o.tx=X0+(j++)*SP;o.ts=1}else{o.tx=X0+j*SP;o.ts=0}}
+   else{o.tx=X0+i*SP;o.ts=1;cs[o.d.cat].push(o.tx)}
+   if(instant){o.g.position.x=o.tx;o.sc=o.ts}
+  });
+  G=cs.map(a=>a.length?(a[0]+a[a.length-1])/2:null);
+  const n=Math.max(items.length,mode==="new"?j:items.length,1);
+  const len=Math.max(15.4,n*SP+1.2);rail.scale.y=len;rail.position.x=.2+len/2;
+  side.position.set(.2+len+1.2,4.5,8);
+  state.n=n;state.newCount=j;
+ }
+ const state={n:12,newCount:0};
+ function range(){
+  if(mode==="new"){const n=state.newCount,mid=X0+(Math.max(n,1)-1)*SP/2;if(n<=5)return[mid,mid];return[X0+2*SP,X0+(n-1)*SP-2*SP]}
+  const c=G.filter(x=>x!==null);if(!c.length)return[X0,X0];return[c[0],c[c.length-1]]
+ }
+ function pForCenter(x){const[a,b]=range();return P0+(1-P0)*(b>a?Math.max(0,Math.min(1,(x-a)/(b-a))):0)}
+ function goTo(k){
+  const prev=mode;mode=k===5?"new":"all";layout();
+  let p=0;
+  if(k>=1&&k<=4){let c=G[k-1];if(c===null){const av=G.map((x,i)=>x===null?null:i).filter(x=>x!==null);if(av.length){av.sort((a,b)=>Math.abs(a-(k-1))-Math.abs(b-(k-1)));c=G[av[0]]}else c=X0}p=pForCenter(c)}
+  else if(k===5)p=P0;
+  const m=document.documentElement.scrollHeight-innerHeight;scrollTo({top:m*p,behavior:reduce?"auto":"smooth"});
+ }
+ document.querySelectorAll("[data-go]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();goTo(+a.dataset.go)}));
+ [...$("pill").children].forEach((b,k)=>b.onclick=()=>goTo(k));
+
+ let p=0,tp=0,camx=7.3;
+ const asp=()=>innerWidth/innerHeight,T=Math.tan(19*Math.PI/180);
+ const zFor=w=>w/(2*T*asp());
+ function resize(){R.setSize(innerWidth,innerHeight);cam.aspect=asp();cam.updateProjectionMatrix()}
+ addEventListener("resize",resize);resize();
+ function onScroll(){const m=document.documentElement.scrollHeight-innerHeight;tp=m>0?Math.min(1,scrollY/m):0}
+ addEventListener("scroll",onScroll,{passive:true});onScroll();p=tp;
+
+ const rc=new THREE.Raycaster(),pl=new THREE.Plane(new THREE.Vector3(0,0,1),-.1),pt=new THREE.Vector3(),nd=new THREE.Vector2();
+ let hover=-1,sel=-1;
+ function pick(e){nd.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);rc.setFromCamera(nd,cam);
+  if(!rc.ray.intersectPlane(pl,pt))return -1;if(pt.y>RAIL+.3||pt.y<RAIL-2.3)return -1;
+  let best=-1,bd=.62;items.forEach(o=>{if(o.sc<.5)return;const dx=Math.abs(pt.x-o.g.position.x);if(dx<bd){bd=dx;best=o.i}});return best}
+ $("scene").addEventListener("pointermove",e=>{hover=pick(e);$("scene").style.cursor=hover>=0?"pointer":"default"});
+ $("scene").addEventListener("click",e=>{const k=pick(e);if(k>=0)openCard(k)});
+ const closeCard=()=>{sel=-1;$("card").classList.remove("on")};$("cx").onclick=closeCard;
+ addEventListener("keydown",e=>{if(e.key==="Escape"){closeCard();$("adm").classList.remove("on")}});
+ function openCard(k){
+  sel=k;const o=items[k],d=o.d;$("cn").textContent=d.name;$("cp").textContent=fmt(d.price);$("cd").textContent=d.desc||"";
+  const sw=$("csw");sw.innerHTML="";
+  if(!d.photo)[d.color,...ALT].forEach(c=>{const b=document.createElement("button");b.style.background=c;b.setAttribute("aria-label","Colour "+c);b.setAttribute("aria-pressed",c===o.col);
+   b.onclick=()=>{o.col=c;o.m.material.map.dispose();o.m.material.map=drawMain(d,c);o.m.material.needsUpdate=true;[...sw.children].forEach(x=>x.setAttribute("aria-pressed",x===b))};sw.appendChild(b)});
+  const sz=$("csz");sz.innerHTML="";["S","M","L","XL","XXL"].forEach((z,j)=>{const b=document.createElement("button");b.textContent=z;b.setAttribute("aria-pressed",j===1);b.onclick=()=>[...sz.children].forEach(x=>x.setAttribute("aria-pressed",x===b));sz.appendChild(b)});
+  $("card").classList.add("on");
+ }
+ const v=new THREE.Vector3(),clock=new THREE.Clock(),sm=x=>x*x*(3-2*x);
+ function frame(){
+  const t=clock.getElapsedTime();p+=(tp-p)*(reduce?1:.07);
+  const wS=Math.max(asp()<1?16:19.5,state.n*SP+X0+5.5),wC=asp()<1?3.6:7;
+  const zS=zFor(wS),zC=zFor(wC),u=sm(Math.min(1,p/P0)),q=Math.max(0,(p-P0)/(1-P0));
+  const[a,b]=range(),cxp=a+(b-a)*q,sx=(-3+state.n*SP+X0+1)/2;
+  const want=sx+(cxp-sx)*u;camx+=(want-camx)*(reduce?1:.12);
+  const z=zS+(zC-zS)*u,y=2.5+(2.2-2.5)*u;
+  cam.position.set(camx,y,z);cam.lookAt(camx,2.35+(1.9-2.35)*u,0);
+  items.forEach(o=>{const h=o.i===hover||o.i===sel?1:0;o.hv+=(h-o.hv)*.15;
+   o.g.position.x+=(o.tx-o.g.position.x)*(reduce?1:.12);o.sc+=(o.ts-o.sc)*(reduce?1:.12);
+   o.g.scale.setScalar(Math.max(o.sc,.001));o.g.visible=o.sc>.02;
+   o.g.rotation.z=reduce?0:Math.sin(t*.7+o.i*1.3)*.012+o.hv*Math.sin(t*3)*.01;o.g.position.z=.1+o.hv*.12});
+  let k=0;if(p>=P0*.5){if(mode==="new")k=5;else{let bd=1e9;G.forEach((c,i)=>{if(c!==null&&Math.abs(c-cxp)<bd){bd=Math.abs(c-cxp);k=i+1}})}}
+  [...$("pill").children].forEach((bt,j)=>bt.setAttribute("aria-current",j===k));
+  if(hover>=0&&items[hover]){const o=items[hover];v.set(o.g.position.x,RAIL-2.3,.2).project(cam);const tip=$("tip");
+   $("tn").textContent=o.d.name+(o.d.isNew?" · New":"");$("tp").textContent=fmt(o.d.price);
+   tip.style.left=((v.x+1)/2*innerWidth)+"px";tip.style.top=((1-v.y)/2*innerHeight+6)+"px";tip.style.opacity=u>.3?1:0}
+  else $("tip").style.opacity=0;
+  R.render(S3,cam);requestAnimationFrame(frame);
+ }
+ build(PRODUCTS);frame();
+ const L=$("load");L.style.opacity=0;setTimeout(()=>L.style.display="none",650);
+ api={setProducts(list){PRODUCTS=list;closeCard();build(list)}};
+ initData();
+}
+
+/* ---- data + admin (db / assets / user capabilities) ---- */
+async function initData(){
+ if(typeof claude==="undefined"||!claude.use)return;
+ const [db,user,assets]=await Promise.all([claude.use("db"),claude.use("user"),claude.use("assets")]).catch(()=>[null,null,null]);
+ if(!db)return;
+ const col=db.collection("products");let live=[],canEdit=false;
+ try{canEdit=user?await user.canEdit():false}catch(e){}
+ col.onSnapshot(snap=>{
+  live=snap.docs.map(d=>Object.assign({id:d.id,photo:""},d.data()));
+  api.setProducts(live.length?live:SAMPLE);
+  if(canEdit)renderList();
+ },()=>{});
+ if(!canEdit)return;
+ const adm=$("adm"),form=$("admform");let editing=null,edPhoto="",edPhotoFile=null;
+ $("admbtn").style.display="block";
+ $("admbtn").onclick=()=>{adm.classList.add("on");renderList()};
+ $("admx").onclick=()=>adm.classList.remove("on");
+ $("f_cat").innerHTML=CATS.map((c,i)=>`<option value="${i}">${c}</option>`).join("");
+ function fillStyles(){$("f_style").innerHTML=STYLES[+$("f_cat").value].map(s=>`<option value="${s[0]}">${s[1]}</option>`).join("")}
+ $("f_cat").onchange=fillStyles;
+ function msg(t){$("f_msg").textContent=t||""}
+ function pv(){$("f_pv").style.backgroundImage=edPhoto?`url("${edPhoto}")`:"none"}
+ function renderList(){
+  const list=live.length?live:[];
+  $("admhint").textContent=live.length?"Click a product to edit it. Changes show on the store straight away.":"The store is showing sample products. Import them to edit, or add your own.";
+  $("admimp").style.display=live.length?"none":"inline-block";
+  $("admlist").innerHTML="";
+  list.slice().sort((a,b)=>(a.cat-b.cat)||((a.order||0)-(b.order||0))).forEach(d=>{
+   const r=document.createElement("div");r.className="row";r.tabIndex=0;
+   const bg=d.photo?`url("${d.photo}")`:"none";
+   r.innerHTML=`<div class="th" style="background-color:${d.color||"#ddd"};background-image:${bg}"></div><div><b></b><small></small></div>`;
+   r.querySelector("b").textContent=d.name;r.querySelector("small").textContent=fmt(d.price)+" · "+CATS[d.cat]+(d.isNew?" · New":"");
+   r.onclick=()=>edit(d);r.onkeydown=e=>{if(e.key==="Enter")edit(d)};$("admlist").appendChild(r)});
+ }
+ function edit(d){
+  editing=d||null;edPhotoFile=null;form.style.display="block";msg();
+  $("f_name").value=d?d.name:"";$("f_price").value=d?d.price:"";$("f_cat").value=d?d.cat:0;fillStyles();
+  if(d)$("f_style").value=d.style;$("f_color").value=d&&d.color?d.color:"#2f6b4a";$("f_desc").value=d?d.desc||"":"";
+  $("f_new").checked=!!(d&&d.isNew);edPhoto=d?d.photo||"":"";$("f_photo").value="";pv();
+  $("f_del").style.display=d?"inline-block":"none";$("f_del").textContent="Delete";form.scrollIntoView({behavior:"smooth"});
+ }
+ $("admnew").onclick=()=>edit(null);
+ $("f_cancel").onclick=()=>{form.style.display="none"};
+ $("f_rm").onclick=()=>{edPhoto="";edPhotoFile=null;$("f_photo").value="";pv()};
+ $("f_photo").onchange=e=>{const f=e.target.files[0];if(!f)return;
+  if(!assets){msg("Photo upload is not available for your account.");return}
+  edPhotoFile=f;edPhoto=URL.createObjectURL(f);pv()};
+ $("admimp").onclick=async()=>{$("admimp").disabled=true;try{for(const d of SAMPLE){const{id,sample,...rest}=d;await col.doc(id).set(rest)}}catch(e){msg("Import failed. Try again.")}$("admimp").disabled=false};
+ $("f_save").onclick=async()=>{
+  const name=$("f_name").value.trim(),price=Number($("f_price").value);
+  if(!name){msg("Enter a product name.");return}
+  if(!(price>=0)||$("f_price").value===""){msg("Enter a price in BDT.");return}
+  $("f_save").disabled=true;msg("Saving…");
+  try{
+   let photo=edPhoto;
+   if(edPhotoFile){const r=await assets.upload(edPhotoFile);photo=r.url||("/_blob/"+r.id)}
+   const data={name,price,cat:+$("f_cat").value,style:$("f_style").value,color:$("f_color").value,desc:$("f_desc").value.trim(),photo,isNew:$("f_new").checked,order:editing&&editing.order!=null?editing.order:Date.now()};
+   const id=editing&&!editing.sample?editing.id:"p"+Date.now().toString(36);
+   await col.doc(id).set(data);
+   form.style.display="none";msg();
+  }catch(e){msg("Could not save: "+(e&&e.message||"try again")+".")}
+  $("f_save").disabled=false;
+ };
+ $("f_del").onclick=async()=>{
+  if(!editing||editing.sample)return;
+  if($("f_del").textContent==="Delete"){$("f_del").textContent="Tap again to delete";return}
+  try{await col.doc(editing.id).delete();form.style.display="none"}catch(e){msg("Could not delete.")}
+ };
+}
+</script>
+
+<script>
+(()=> {
+  const CART_KEY="mixoria_cart_v1";
+  let cart=[];
+  try { cart=JSON.parse(localStorage.getItem(CART_KEY)||"[]"); if(!Array.isArray(cart)) cart=[]; } catch(e){cart=[];}
+  const el=id=>document.getElementById(id);
+  const money=n=>"৳"+Number(n||0).toLocaleString("en-US");
+  const save=()=>{try{localStorage.setItem(CART_KEY,JSON.stringify(cart));}catch(e){};render();};
+  const count=()=>cart.reduce((s,x)=>s+x.qty,0);
+  const total=()=>cart.reduce((s,x)=>s+x.price*x.qty,0);
+  function render(){
+    el("cartCount").textContent=count();
+    el("cartSubtotal").textContent=money(total());
+    el("cartItems").innerHTML="";
+    if(!cart.length){el("cartItems").innerHTML='<p class="checkoutHint">Your cart is empty. Select a product to add it here.</p>';return;}
+    cart.forEach((item,i)=>{
+      const row=document.createElement("div");row.className="cartLine";
+      const info=document.createElement("div");
+      const name=document.createElement("strong");name.textContent=item.name;info.appendChild(name);
+      const meta=document.createElement("small");meta.textContent="Size: "+item.size+(item.color?" · Colour: "+item.color:"");info.appendChild(meta);
+      const price=document.createElement("small");price.textContent=money(item.price)+" each";info.appendChild(price);
+      const controls=document.createElement("div");controls.className="cartQty";
+      const minus=document.createElement("button");minus.type="button";minus.textContent="−";minus.setAttribute("aria-label","Decrease quantity");
+      minus.onclick=()=>{item.qty--;if(item.qty<=0)cart.splice(i,1);save();};
+      const qty=document.createElement("span");qty.textContent=item.qty;
+      const plus=document.createElement("button");plus.type="button";plus.textContent="+";plus.setAttribute("aria-label","Increase quantity");
+      plus.onclick=()=>{item.qty++;save();};
+      controls.append(minus,qty,plus);
+      const remove=document.createElement("button");remove.type="button";remove.textContent="Remove";remove.onclick=()=>{cart.splice(i,1);save();};
+      controls.appendChild(remove);row.append(info,controls);el("cartItems").appendChild(row);
+    });
+  }
+  window.addEventListener("mixoria:add",e=>{
+    const d=e.detail||{}; if(!d.id||!d.name||!(Number(d.price)>=0))return;
+    const key=[d.id,d.size,d.color].join("|");
+    const found=cart.find(x=>x.key===key);
+    if(found)found.qty++;else cart.push({key,id:String(d.id),name:String(d.name),price:Number(d.price),size:String(d.size||"M"),color:String(d.color||""),qty:1});
+    save();el("cartPanel").classList.add("on");
+  });
+  el("cartOpen").onclick=()=>el("cartPanel").classList.add("on");
+  el("cartClose").onclick=()=>el("cartPanel").classList.remove("on");
+  el("checkoutOpen").onclick=()=>{
+    if(!cart.length){el("checkoutMessage").textContent="Add a product before checkout.";return;}
+    if(!window.MIXORIA_GET_TOKEN){el("checkoutMessage").textContent="Account system is still loading. Please try again.";return;}
+    el("cartPanel").classList.remove("on");
+    if(window.MIXORIA_IS_SIGNED_IN&&window.MIXORIA_IS_SIGNED_IN()){
+      el("cartPanel").classList.remove("on");el("checkoutModal").classList.add("on");return;
+    }
+    if(window.MIXORIA_AUTH_OPEN)window.MIXORIA_AUTH_OPEN();
+    el("checkoutMessage").textContent="Log in or create an account first, then tap Proceed to checkout again.";
+  };
+  el("checkoutClose").onclick=()=>el("checkoutModal").classList.remove("on");
+  el("checkoutModal").addEventListener("click",e=>{if(e.target===el("checkoutModal"))el("checkoutModal").classList.remove("on");});
+  el("checkoutForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    if(!cart.length){el("checkoutMessage").textContent="Your cart is empty.";return;}
+    const button=el("placeOrder");button.disabled=true;
+    const message=el("checkoutMessage");message.textContent="Submitting your order…";
+    const order={
+      customer:{name:el("buyerName").value.trim(),phone:el("buyerPhone").value.trim(),address:el("buyerAddress").value.trim(),note:el("buyerNote").value.trim()},
+      items:cart.map(x=>({productId:x.id,name:x.name,price:x.price,size:x.size,color:x.color,quantity:x.qty})),
+      subtotal:total(),paymentMethod:el("paymentMethod").value
+    };
+    try{
+      const token=await window.MIXORIA_GET_TOKEN();
+      const response=await fetch("/api/orders",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify(order)});
+      const data=await response.json();
+      if(!response.ok)throw new Error(data.error||"Could not create order.");
+      if(order.paymentMethod==="bkash"){
+        const pay=await fetch("/api/bkash/create-payment",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({orderId:data.orderId})});
+        const payment=await pay.json();
+        if(!pay.ok||!payment.bkashURL)throw new Error(payment.error||"bKash checkout is not configured on the server yet.");
+        window.location.href=payment.bkashURL;return;
+      }
+      message.textContent="Order received! Your order ID is "+data.orderId+". Pay cash on delivery.";
+      cart=[];save();el("checkoutForm").reset();
+    }catch(err){message.textContent=err.message||"Something went wrong. Please try again.";}
+    finally{button.disabled=false;}
+  });
+  render();
+})();
+</script>
+
+
+<script src="firebase-config.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+const app = initializeApp(window.MIXORIA_FIREBASE_CONFIG);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let authMode = "login";
+let currentProfile = {};
+const message = (s) => { $("accountMessage").textContent = s || ""; };
+function setMode(mode){
+ authMode=mode;
+ $("accountTitle").textContent=mode==="register"?"Create your MIXORIA account":"Customer login";
+ $("authSubmit").textContent=mode==="register"?"Create account":"Log in";
+ $("switchAuth").textContent=mode==="register"?"I already have an account":"Create account";
+ $("registerNameWrap").style.display=mode==="register"?"block":"none";
+ $("accountPassword").autocomplete=mode==="register"?"new-password":"current-password";
+ message("");
+}
+function openAccount(){ $("accountModal").classList.add("on"); }
+window.MIXORIA_AUTH_OPEN=openAccount;
+window.MIXORIA_IS_SIGNED_IN=()=>!!auth.currentUser;
+window.MIXORIA_GET_TOKEN=async()=>{
+ if(!auth.currentUser) throw new Error("Please log in before placing an order.");
+ return await auth.currentUser.getIdToken();
+};
+$("accountOpen").addEventListener("click",openAccount);
+$("accountClose").addEventListener("click",()=>$("accountModal").classList.remove("on"));
+$("accountModal").addEventListener("click",e=>{if(e.target===$("accountModal"))$("accountModal").classList.remove("on")});
+$("switchAuth").addEventListener("click",()=>setMode(authMode==="login"?"register":"login"));
+$("authForm").addEventListener("submit",async e=>{
+ e.preventDefault(); const email=$("accountEmail").value.trim(); const password=$("accountPassword").value;
+ const name=$("registerName").value.trim(); const submit=$("authSubmit"); submit.disabled=true; message("Please wait…");
+ try{
+  let credential;
+  if(authMode==="register"){
+   if(!name) throw new Error("Please enter your full name.");
+   credential=await createUserWithEmailAndPassword(auth,email,password);
+   await updateProfile(credential.user,{displayName:name});
+   await setDoc(doc(db,"customers",credential.user.uid),{uid:credential.user.uid,displayName:name,email:credential.user.email,createdAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+   message("Account created successfully.");
+  } else {
+   credential=await signInWithEmailAndPassword(auth,email,password);
+   message("Logged in successfully.");
+  }
+  $("accountPassword").value="";
+ }catch(err){message(err.message||"Could not complete account action.");}
+ finally{submit.disabled=false;}
+});
+onAuthStateChanged(auth,async user=>{
+ const signed=!!user;
+ $("accountOpen").textContent=signed?(user.displayName||user.email||"My Account"):"Login / Account";
+ $("authForm").style.display=signed?"none":"block";
+ $("accountProfile").style.display=signed?"block":"none";
+ if(!user){currentProfile={};return;}
+ $("signedInLabel").textContent="Signed in as "+(user.email||"");
+ try{
+  const snap=await getDoc(doc(db,"customers",user.uid));
+  currentProfile=snap.exists()?snap.data():{};
+  $("profilePhone").value=currentProfile.phone||"";
+  $("profileAddress").value=currentProfile.address||"";
+  // Create the profile document automatically if it does not exist yet.
+  if(!snap.exists()) await setDoc(doc(db,"customers",user.uid),{uid:user.uid,displayName:user.displayName||"",email:user.email||"",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+  const checkoutName=document.getElementById("buyerName");
+  if(checkoutName&&!checkoutName.value) checkoutName.value=user.displayName||"";
+  if(document.getElementById("buyerPhone")&&!document.getElementById("buyerPhone").value) document.getElementById("buyerPhone").value=currentProfile.phone||"";
+  if(document.getElementById("buyerAddress")&&!document.getElementById("buyerAddress").value) document.getElementById("buyerAddress").value=currentProfile.address||"";
+ }catch(err){message("Profile could not be loaded: "+err.message);}
+});
+$("saveProfile").addEventListener("click",async()=>{
+ const user=auth.currentUser;if(!user)return;
+ try{
+  await setDoc(doc(db,"customers",user.uid),{phone:$("profilePhone").value.trim(),address:$("profileAddress").value.trim(),updatedAt:serverTimestamp()},{merge:true});
+  currentProfile.phone=$("profilePhone").value.trim();currentProfile.address=$("profileAddress").value.trim();message("Profile saved.");
+ }catch(err){message("Could not save profile: "+err.message);}
+});
+$("signOut").addEventListener("click",async()=>{try{await signOut(auth);message("You are logged out.");setMode("login");}catch(err){message(err.message);}});
+$("loadMyOrders").addEventListener("click",async()=>{
+ try{
+  const token=await window.MIXORIA_GET_TOKEN();
+  const response=await fetch("/api/my-orders",{headers:{Authorization:"Bearer "+token}});
+  const data=await response.json();if(!response.ok)throw new Error(data.error||"Could not load orders.");
+  const list=$("myOrdersList");list.innerHTML="";
+  if(!data.orders.length){list.textContent="You have no orders yet.";return;}
+  data.orders.forEach(o=>{const row=document.createElement("div");row.className="myOrder";row.textContent="Order "+o.id+" · "+(o.orderStatus||"new")+" · ৳"+Number(o.subtotal||0).toLocaleString("en-US");list.appendChild(row);});
+ }catch(err){message(err.message||"Could not load orders.");}
+});
+setMode("login");
+</script>
+
+</body>
+</html>
